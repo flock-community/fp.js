@@ -17,9 +17,11 @@ test('compose', () => {
 });
 
 test('pipe', () => {
-  expect(pipe(
-    'John',
-    it => 'Hello, ' + it,
-    it => it + '!',
-  )).toEqual('Hello, John!');
+  expect(
+    pipe(
+      'John',
+      it => 'Hello, ' + it,
+      it => it + '!',
+    ),
+  ).toEqual('Hello, John!');
 });
