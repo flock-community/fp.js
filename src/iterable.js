@@ -14,7 +14,7 @@ export const filter = predicate =>
     }
   };
 
-export const forEvery = fn =>
+export const forEach = fn =>
   function(iterable) {
     for (const item of iterable) {
       fn(item);
@@ -26,6 +26,13 @@ export const every = predicate => iterable => {
     if (!predicate(item)) return false;
   }
   return true;
+};
+
+export const some = predicate => iterable => {
+  for (const item of iterable) {
+    if (predicate(item)) return true;
+  }
+  return false;
 };
 
 export const takeWhile = predicate =>
