@@ -14,12 +14,19 @@ export const filter = predicate =>
     }
   };
 
-export const forEach = fn =>
-  function(iterable) {
+export const takeWhile = predicate =>
+  function*(iterable) {
     for (const item of iterable) {
-      fn(item);
+      if (!predicate(item)) break;
+      yield item;
     }
   };
+
+export const forEvery = fn => iterable => {
+  for (const item of iterable) {
+    fn(item);
+  }
+};
 
 export const every = predicate => iterable => {
   for (const item of iterable) {
@@ -35,22 +42,17 @@ export const some = predicate => iterable => {
   return false;
 };
 
-export const takeWhile = predicate =>
-  function*(iterable) {
-    for (const item of iterable) {
-      if (!predicate(item)) break;
-      yield item;
-    }
-  };
+export const iterator = iterable => iterable[Symbol.iterator]();
+
+export const nextValue = compose(
+  iterator,
+  it => it.next().value,
+);
 
 export const reduce = (operation, seed = null) => iterable => {
-  let acc = seed;
+  let acc = seed ?? nextValue(iterable);
   for (const item of iterable) {
-    if (acc == null) {
-      acc = item;
-    } else {
-      acc = operation(acc, item);
-    }
+    acc = operation(acc, item);
   }
   return acc;
 };
@@ -64,8 +66,6 @@ export const length = compose(
 
 export const join = separator => reduce((acc, cur) => `${acc}${separator}${cur}`);
 
-export const iterator = iterable => iterable[Symbol.iterator];
-
 export const toArray = iterable => [...iterable];
 
 export const toSet = iterable => new Set(iterable);
@@ -73,4 +73,9 @@ export const toSet = iterable => new Set(iterable);
 export const isEmpty = compose(
   length,
   it => it === 0,
+);
+
+export const average = compose(
+  toArray,
+  it => sum(it) / length(it),
 );
