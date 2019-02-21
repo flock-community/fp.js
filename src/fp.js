@@ -6,6 +6,6 @@ export const curry = fn => (...args) =>
   args.length < fn.length ? x => fn(x, ...args) : fn(...args);
 
 export const also = fn => it => {
-  fn();
+  fn(it);
   return it;
 };

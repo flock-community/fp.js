@@ -14,20 +14,6 @@ export const filter = predicate =>
     }
   };
 
-export const forEvery = fn =>
-  function(iterable) {
-    for (const item of iterable) {
-      fn(item);
-    }
-  };
-
-export const every = predicate => iterable => {
-  for (const item of iterable) {
-    if (!predicate(item)) return false;
-  }
-  return true;
-};
-
 export const takeWhile = predicate =>
   function*(iterable) {
     for (const item of iterable) {
@@ -36,14 +22,37 @@ export const takeWhile = predicate =>
     }
   };
 
-export const reduce = (operation, seed = null) => iterable => {
-  let acc = seed;
+export const forEvery = fn => iterable => {
   for (const item of iterable) {
-    if (acc == null) {
-      acc = item;
-    } else {
-      acc = operation(acc, item);
-    }
+    fn(item);
+  }
+};
+
+export const every = predicate => iterable => {
+  for (const item of iterable) {
+    if (!predicate(item)) return false;
+  }
+  return true;
+};
+
+export const some = predicate => iterable => {
+  for (const item of iterable) {
+    if (predicate(item)) return true;
+  }
+  return false;
+};
+
+export const iterator = iterable => iterable[Symbol.iterator]();
+
+export const nextValue = compose(
+  iterator,
+  it => it.next().value,
+);
+
+export const reduce = (operation, seed = null) => iterable => {
+  let acc = seed ?? nextValue(iterable);
+  for (const item of iterable) {
+    acc = operation(acc, item);
   }
   return acc;
 };
@@ -56,8 +65,6 @@ export const length = compose(
 );
 
 export const join = separator => reduce((acc, cur) => `${acc}${separator}${cur}`);
-
-export const iterator = iterable => iterable[Symbol.iterator];
 
 export const toArray = iterable => [...iterable];
 
