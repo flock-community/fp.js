@@ -22,7 +22,7 @@ export const takeWhile = predicate =>
     }
   };
 
-export const forEvery = fn => iterable => {
+export const forEach = fn => iterable => {
   for (const item of iterable) {
     fn(item);
   }
