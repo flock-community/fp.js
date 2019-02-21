@@ -59,6 +59,8 @@ export const reduce = (operation, seed = null) => iterable => {
 
 export const sum = reduce((acc, cur) => acc + cur, 0);
 
+export const average = iterable => sum(iterable) / length(iterable);
+
 export const length = compose(
   map(_ => 1),
   sum,
