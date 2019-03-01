@@ -13,3 +13,5 @@ export const also = fn => it => {
 export const not = fn => it => !fn(it);
 
 export const and = (...fns) => it => fns.every(fn => fn(it));
+
+export const equals = y => x => x === y;

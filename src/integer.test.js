@@ -14,6 +14,16 @@ test('divide', () => {
 
   expect(
     pipe(
+      -27,
+      divide(6),
+    ),
+  ).toEqual({
+    q: -5,
+    r: 3,
+  });
+
+  expect(
+    pipe(
       20,
       divide(4),
     ),
@@ -37,4 +47,13 @@ test('divides', () => {
       divides(20),
     ),
   ).toEqual(true);
+});
+
+test('gcd', () => {
+  expect(
+    pipe(
+      20,
+      gcd(10),
+    ),
+  ).toEqual(10);
 });

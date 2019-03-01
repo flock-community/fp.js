@@ -7,6 +7,13 @@ export const map = transform =>
     }
   };
 
+export const expand = transform =>
+  function*(iterable) {
+    for (const item of iterable) {
+      yield* transform(item);
+    }
+  };
+
 export const filter = predicate =>
   function*(iterable) {
     for (const item of iterable) {
@@ -72,14 +79,16 @@ export const reduce = (operation, seed = null) => iterable => {
   return acc;
 };
 
-export const sum = reduce((acc, cur) => acc + cur, 0);
+export const sum = reduce((acc, cur) => acc + cur);
+
+export const flatten = reduce((acc, cur) => [...acc, ...cur]);
+
+export const join = separator => reduce((acc, cur) => `${acc}${separator}${cur}`);
 
 export const length = compose(
   map(_ => 1),
   sum,
 );
-
-export const join = separator => reduce((acc, cur) => `${acc}${separator}${cur}`);
 
 export const toArray = iterable => [...iterable];
 

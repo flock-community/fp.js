@@ -1,20 +1,31 @@
-import { naturals } from './numbers';
-import { first, map, takeWhile, filter, last, toArray } from './iterable';
-import { also, and, pipe } from './fp';
+import { integers } from './numbers';
+import { first, map} from './iterable';
+import { compose, equals, pipe } from './fp';
 
 export const add = b => a => a + b;
 export const times = b => a => a * b;
 
 export const divide = b => a =>
   pipe(
-    naturals(),
+    integers(),
     map(q => ({ q, r: a - q * b })),
-    first(({ q, r }) => r < b),
+    first(({ q, r }) => r >= 0 && r < b),
   );
 
-export const divides = b => a =>
-  pipe(
-    b,
-    divide(a),
-    ({ q, r }) => r === 0,
+export const mod = b =>
+  compose(
+    divide(b),
+    ({ q, r }) => r,
   );
+
+export const isDivisibleBy = b =>
+  compose(
+    mod(b),
+    equals(0),
+  );
+
+export const divides = b => a => isDivisibleBy(a)(b);
+
+export const gcd = b => a => b === 0 ? a : gcd(mod(b)(a))(b);
+
+export const lcm = a => b => (a * b) / gcd(a)(b);
