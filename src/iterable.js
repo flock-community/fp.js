@@ -42,6 +42,21 @@ export const some = predicate => iterable => {
   return false;
 };
 
+export const first = predicate => iterable => {
+  for (const item of iterable) {
+    if (predicate(item)) return item;
+  }
+  return null;
+};
+
+export const last = predicate => iterable => {
+  let match = null;
+  for (const item of iterable) {
+    if (predicate(item)) match = item;
+  }
+  return match;
+};
+
 export const iterator = iterable => iterable[Symbol.iterator]();
 
 export const nextValue = compose(

@@ -9,3 +9,7 @@ export const also = fn => it => {
   fn(it);
   return it;
 };
+
+export const not = fn => it => !fn(it);
+
+export const and = (...fns) => it => fns.every(fn => fn(it));

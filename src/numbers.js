@@ -1,5 +1,6 @@
-import { pipe } from './fp';
+import { not, pipe } from './fp';
 import { every, filter, takeWhile } from './iterable';
+import { divides } from './integer';
 
 // More elegant but very slow because of lack of tail call optimization.
 export function* naturalsRecursive(start = 0) {
@@ -14,8 +15,8 @@ export function* naturals(start = 0) {
 export const isPrime = p =>
   pipe(
     naturals(2),
-    takeWhile(n => n ** 2 <= p),
-    every(n => p % n !== 0),
+    takeWhile(n => n < p),
+    every(not(divides(p))),
   );
 
 export const primes = () =>
