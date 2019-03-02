@@ -32,3 +32,8 @@ export const primes = () =>
     naturals(2),
     filter(isPrime),
   );
+
+export const range = (start, end) => pipe(
+  naturals(start),
+  takeWhile(n => n < end)
+);

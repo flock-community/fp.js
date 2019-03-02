@@ -12,6 +12,12 @@ export const divide = b => a =>
     first(({ q, r }) => r >= 0 && r < b),
   );
 
+export const quotient = b =>
+  compose(
+    divide(b),
+    ({ q }) => q,
+  );
+
 export const mod = b =>
   compose(
     divide(b),

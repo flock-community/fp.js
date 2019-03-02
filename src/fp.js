@@ -15,3 +15,8 @@ export const not = fn => it => !fn(it);
 export const and = (...fns) => it => fns.every(fn => fn(it));
 
 export const equals = y => x => x === y;
+
+export const domain = (condition, domain) => it => {
+  if(!condition(it)) throw `Object does not satisfy domain.\nObject: ${JSON.stringify(it)}\nDomain: ${domain}`;
+  return it;
+};
