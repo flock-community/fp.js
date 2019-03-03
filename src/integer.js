@@ -1,16 +1,17 @@
 import { integers } from './numbers';
-import { first, map} from './iterable';
-import { compose, equals, pipe } from './fp';
+import { first, map } from './iterable';
+import { compose, curry, equals, pipe } from './fp';
 
 export const add = b => a => a + b;
 export const times = b => a => a * b;
 
-export const divide = b => a =>
+export const divide = curry((a, b) =>
   pipe(
     integers(),
     map(q => ({ q, r: a - q * b })),
     first(({ q, r }) => r >= 0 && r < b),
-  );
+  ),
+);
 
 export const quotient = b =>
   compose(
@@ -32,6 +33,6 @@ export const isDivisibleBy = b =>
 
 export const divides = b => a => isDivisibleBy(a)(b);
 
-export const gcd = b => a => b === 0 ? a : gcd(mod(b)(a))(b);
+export const gcd = b => a => (b === 0 ? a : gcd(mod(b)(a))(b));
 
 export const lcm = a => b => (a * b) / gcd(a)(b);

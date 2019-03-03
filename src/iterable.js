@@ -29,6 +29,29 @@ export const takeWhile = predicate =>
     }
   };
 
+export const endWhen = predicate =>
+  function*(iterable) {
+    for (const item of iterable) {
+      yield item;
+      if (predicate(item)) break;
+    }
+  };
+
+export const take = n =>
+  function*(iterable) {
+    let count = 0;
+    for (const item of iterable) {
+      if (count === n) break;
+      yield item;
+      count++;
+    }
+  };
+
+export const sequence = function*(seed, next) {
+  yield seed;
+  while (true) yield (seed = next(seed));
+};
+
 export const forEach = fn => iterable => {
   for (const item of iterable) {
     fn(item);
@@ -49,14 +72,14 @@ export const some = predicate => iterable => {
   return false;
 };
 
-export const first = predicate => iterable => {
+export const first = (predicate = item => true) => iterable => {
   for (const item of iterable) {
     if (predicate(item)) return item;
   }
   return null;
 };
 
-export const last = predicate => iterable => {
+export const last = (predicate = item => true) => iterable => {
   let match = null;
   for (const item of iterable) {
     if (predicate(item)) match = item;
@@ -71,6 +94,8 @@ export const nextValue = compose(
   it => it.next().value,
 );
 
+export const fold = (seed, operation) => reduce(operation, seed);
+
 export const reduce = (operation, seed = null) => iterable => {
   let acc = seed ?? nextValue(iterable);
   for (const item of iterable) {
@@ -79,6 +104,16 @@ export const reduce = (operation, seed = null) => iterable => {
   return acc;
 };
 
+export const inject = (seed, operation) =>
+  function*(iterable) {
+    let acc = seed;
+    for (const item of iterable) {
+      yield (acc = operation(acc, item));
+    }
+  };
+
+export const contains = element => some(it => it === element);
+
 export const sum = reduce((acc, cur) => acc + cur);
 
 export const flatten = reduce((acc, cur) => [...acc, ...cur]);
@@ -86,13 +121,16 @@ export const flatten = reduce((acc, cur) => [...acc, ...cur]);
 export const join = separator => reduce((acc, cur) => `${acc}${separator}${cur}`);
 
 export const length = compose(
-  map(_ => 1),
-  sum,
+  withIndex,
+  last(),
+  it => it.index,
 );
 
 export const toArray = iterable => [...iterable];
 
 export const toSet = iterable => new Set(iterable);
+
+export const toString = reduce((acc, cur) => `${acc}${cur}`);
 
 export const isEmpty = compose(
   length,
@@ -103,3 +141,11 @@ export const average = compose(
   toArray,
   it => sum(it) / length(it),
 );
+
+export const withIndex = function*(iterable) {
+  let index = 0;
+  for (const item of iterable) {
+    yield { index, value: item };
+    index++;
+  }
+};
