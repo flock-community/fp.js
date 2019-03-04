@@ -1,5 +1,5 @@
 import { not, pipe } from './fp';
-import { every, expand, filter, takeWhile } from './iterable';
+import { every, expand, filter, sequence, takeWhile } from './iterable';
 import { divides } from './integer';
 
 // More elegant but very slow because of lack of tail call optimization.

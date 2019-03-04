@@ -1,4 +1,5 @@
-import { compose } from './fp';
+import { also, compose } from './fp';
+import { naturals } from './numbers';
 
 export const map = transform =>
   function*(iterable) {
@@ -47,10 +48,10 @@ export const take = n =>
     }
   };
 
-export const sequence = function*(seed, next) {
+export const sequence = (seed, next) => (function*() {
   yield seed;
   while (true) yield (seed = next(seed));
-};
+})();
 
 export const forEach = fn => iterable => {
   for (const item of iterable) {
@@ -120,10 +121,15 @@ export const flatten = reduce((acc, cur) => [...acc, ...cur]);
 
 export const join = separator => reduce((acc, cur) => `${acc}${separator}${cur}`);
 
+export const zip = (other, transform = (a, b) => [a, b]) =>
+  map(item => transform(item, nextValue(other)));
+
+export const withIndex = zip(sequence(0, i => i + 1));
+
 export const length = compose(
   withIndex,
   last(),
-  it => it.index,
+  ([value, i]) => i + 1,
 );
 
 export const toArray = iterable => [...iterable];
@@ -142,10 +148,7 @@ export const average = compose(
   it => sum(it) / length(it),
 );
 
-export const withIndex = function*(iterable) {
-  let index = 0;
-  for (const item of iterable) {
-    yield { index, value: item };
-    index++;
-  }
-};
+export const unzip = fold([[], []], ([acc1, acc2], [item1, item2]) => [
+  [...acc1, item1],
+  [...acc2, item2],
+]);
