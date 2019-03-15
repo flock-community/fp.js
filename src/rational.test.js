@@ -1,4 +1,4 @@
-import { also, pipe } from './fp';
+import { pipe } from './fp';
 import { rat, add, toDecimal, toDecimalWithRemainders, toDecimalWithRemainders2 } from './rational';
 import {
   toArray,

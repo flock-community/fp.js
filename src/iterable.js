@@ -1,34 +1,56 @@
 import { also, compose, pipe } from './fp';
 import { naturals } from './numbers';
 
-export const map = transform =>
-  function*(iterable) {
-    for (const item of iterable) {
-      yield transform(item);
-    }
-  };
+export const map = transform => function*(iterable) {
+  for (const item of iterable) {
+    yield transform(item);
+  }
+};
 
-export const expand = transform =>
-  function*(iterable) {
-    for (const item of iterable) {
-      yield* transform(item);
-    }
-  };
+export const flatMap = transform => function* (iterable) {
+  for (const item of iterable) {
+    yield* transform(item);
+  }
+};
 
-export const filter = predicate =>
-  function*(iterable) {
-    for (const item of iterable) {
-      if (predicate(item)) yield item;
-    }
-  };
+export const filter = predicate => function*(iterable) {
+  for (const item of iterable) {
+    if (predicate(item)) yield item;
+  }
+};
 
-export const takeWhile = predicate =>
-  function*(iterable) {
-    for (const item of iterable) {
-      if (!predicate(item)) break;
-      yield item;
-    }
-  };
+export const forEach = fn => iterable => {
+  for (const item of iterable) {
+    fn(item);
+  }
+};
+
+export const takeWhile = predicate => function*(iterable) {
+  for (const item of iterable) {
+    if (!predicate(item)) break;
+    yield item;
+  }
+};
+
+export const skipWhile = predicate => function*(iterable) {
+  let dropping = true;
+  for (const item of iterable){
+    if (!dropping) yield item;
+    if (!predicate(item)) dropping = false;
+  }
+};
+
+export const take = n => compose(
+  withIndex,
+  takeWhile(([item, i]) => i < n),
+  map(([value]) => value),
+);
+
+export const skip = n => function*(iterable) {
+  for (const [item, index] of pipe(iterable, withIndex)) {
+    if (index >= n) yield item;
+  }
+};
 
 export const endWhen = predicate =>
   function*(iterable) {
@@ -38,26 +60,12 @@ export const endWhen = predicate =>
     }
   };
 
-export const take = n =>
-  function*(iterable) {
-    let count = 0;
-    for (const item of iterable) {
-      if (count === n) break;
-      yield item;
-      count++;
-    }
-  };
 
-export function* sequence(seed, next)  {
+export function* sequence(seed, next) {
   yield seed;
-  while (true) yield seed = next(seed);
+  while (true) yield (seed = next(seed));
 }
 
-export const forEach = fn => iterable => {
-  for (const item of iterable) {
-    fn(item);
-  }
-};
 
 export const every = predicate => iterable => {
   for (const item of iterable) {
@@ -124,10 +132,11 @@ export const join = separator => reduce((acc, cur) => `${acc}${separator}${cur}`
 export const zip = (other, transform = (a, b) => [a, b]) =>
   map(item => transform(item, nextValue(other)));
 
-export const withIndex = iterable => pipe(
-  iterable,
-  zip(naturals())
-);
+export const withIndex = iterable =>
+  pipe(
+    iterable,
+    zip(naturals()),
+  );
 
 export const length = compose(
   withIndex,
