@@ -1,12 +1,11 @@
-import { curry, pipe } from './fp';
+import { compose, curry } from './fp';
 import { join, map } from './iterable';
 
 const COMBINING_OVERLINE = '\u0305';
 
-export const lAdd = b => a => b + a;
+export const lAdd = curry((a, b) => b + a);
 
-export const overline = string => pipe(
-  string,
+export const overline = compose(
   map(lAdd(COMBINING_OVERLINE)),
   join(''),
 );
