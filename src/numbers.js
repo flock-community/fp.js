@@ -1,5 +1,5 @@
-import { not, pipe } from './fp';
-import { every, expand, filter, sequence, takeWhile } from './iterable';
+import { compose, not, pipe } from './fp';
+import { every, expand, filter, sequence, takeWhile, map } from './iterable';
 import { divides } from './integer';
 
 // More elegant but very slow because of lack of tail call optimization.
@@ -8,9 +8,13 @@ export function* naturalsRecursive(start = 0) {
   yield* naturalsRecursive(start + 1);
 }
 
-export function* naturals(start = 0) {
-  while (true) yield start++;
-}
+export const naturals = (start = 0) => sequence(start, i => i + 1);
+
+export const fibonacci = () =>
+  pipe(
+    sequence([0, 1], ([a, b]) => [b, a + b]),
+    map(it => it[1]),
+  );
 
 export function* integers() {
   yield 0;
@@ -33,7 +37,8 @@ export const primes = () =>
     filter(isPrime),
   );
 
-export const range = (start, end) => pipe(
-  naturals(start),
-  takeWhile(n => n < end)
-);
+export const range = (start, end) =>
+  pipe(
+    naturals(start),
+    takeWhile(n => n < end),
+  );

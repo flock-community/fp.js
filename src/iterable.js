@@ -1,4 +1,4 @@
-import { also, compose } from './fp';
+import { also, compose, pipe } from './fp';
 import { naturals } from './numbers';
 
 export const map = transform =>
@@ -48,10 +48,10 @@ export const take = n =>
     }
   };
 
-export const sequence = (seed, next) => (function*() {
+export function* sequence(seed, next)  {
   yield seed;
-  while (true) yield (seed = next(seed));
-})();
+  while (true) yield seed = next(seed);
+}
 
 export const forEach = fn => iterable => {
   for (const item of iterable) {
@@ -124,7 +124,10 @@ export const join = separator => reduce((acc, cur) => `${acc}${separator}${cur}`
 export const zip = (other, transform = (a, b) => [a, b]) =>
   map(item => transform(item, nextValue(other)));
 
-export const withIndex = zip(sequence(0, i => i + 1));
+export const withIndex = iterable => pipe(
+  iterable,
+  zip(naturals())
+);
 
 export const length = compose(
   withIndex,

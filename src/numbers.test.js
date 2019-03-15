@@ -1,6 +1,17 @@
-import { naturals, primes } from './numbers';
-import { takeWhile, join } from './iterable';
+import { fibonacci, naturals, primes } from './numbers';
+import { takeWhile, join, take } from './iterable';
 import { pipe } from './fp';
+
+
+test('fib', () => {
+  expect(
+    pipe(
+      fibonacci(),
+      take(10),
+      join(', '),
+    ),
+  ).toEqual('0, 1, 2, 3, 4, 5, 6, 7, 8, 9');
+});
 
 test('naturals', () => {
   expect(
