@@ -51,3 +51,23 @@ export function forEach<T>(fn: (value: T) => void) {
     }
   };
 }
+
+
+export function takeWhile(predicate) {
+  return async function* (iterable) {
+    for await (const item of iterable) {
+      if (!predicate(item)) break;
+      yield item;
+    }
+  };
+}
+
+export function reduce<T, R>(operation: (accumulator: R, current: T) => R, seed: R) {
+  return async function(iterable: AsyncIterable<T>) {
+    let accumulator = seed;
+    for await(const current of iterable) {
+      accumulator = operation(accumulator, current);
+    }
+    return accumulator;
+  };
+}
