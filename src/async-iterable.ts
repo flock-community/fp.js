@@ -35,10 +35,10 @@ class Deferred<T> {
 
 export function scan<T, R>(operation: (accumulator: R, current: T) => R, seed: R) {
   return async function*(iterable: AsyncIterable<T>) {
-    let acc = seed;
-    for await(const item of iterable) {
-      acc = operation(acc, item);
-      yield acc;
+    let accumulator = seed;
+    for await(const current of iterable) {
+      accumulator = operation(accumulator, current);
+      yield accumulator;
     }
   };
 }
