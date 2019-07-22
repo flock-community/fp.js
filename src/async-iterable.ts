@@ -1,23 +1,8 @@
-import { nextValue } from './iterable';
-
-export class Deferred<T> {
-  public promise: Promise<T>;
-  public resolve: (value: T) => void;
-  public reject: (reason?: any) => void;
-
-  constructor() {
-    this.promise = new Promise(((resolve, reject) => {
-      this.resolve = resolve;
-      this.reject = reject;
-    }));
-  }
-}
-
 export class Subject<T> implements AsyncIterable<T>, AsyncIterator<T> {
   private receivers: Deferred<T>[] = [];
 
   add(value: T) {
-    this.receivers.forEach(deferred => deferred.resolve(value));
+    this.receivers.forEach(it => it.resolve(value));
     this.receivers = [];
   }
 
@@ -35,12 +20,17 @@ export class Subject<T> implements AsyncIterable<T>, AsyncIterator<T> {
   }
 }
 
-export function forEach<T>(fn: (value: T) => void) {
-  return async function(iterable: AsyncIterable<T>) {
-    for await (const item of iterable) {
-      fn(item);
-    }
-  };
+class Deferred<T> {
+  public promise: Promise<T>;
+  public resolve: (value: T) => void;
+  public reject: (reason?: any) => void;
+
+  constructor() {
+    this.promise = new Promise(((resolve, reject) => {
+      this.resolve = resolve;
+      this.reject = reject;
+    }));
+  }
 }
 
 export function scan<T, R>(operation: (accumulator: R, current: T) => R, seed: R) {
@@ -49,6 +39,14 @@ export function scan<T, R>(operation: (accumulator: R, current: T) => R, seed: R
     for await(const item of iterable) {
       acc = operation(acc, item);
       yield acc;
+    }
+  };
+}
+
+export function forEach<T>(fn: (value: T) => void) {
+  return async function(iterable: AsyncIterable<T>) {
+    for await (const item of iterable) {
+      fn(item);
     }
   };
 }
