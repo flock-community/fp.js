@@ -1,4 +1,4 @@
-import { also, compose, pipe } from './fp';
+import { also, compose, equals, pipe } from './fp';
 import { naturals } from './numbers';
 
 export const map = transform => function*(iterable) {
@@ -7,7 +7,7 @@ export const map = transform => function*(iterable) {
   }
 };
 
-export const flatMap = transform => function* (iterable) {
+export const expand = transform => function* (iterable) {
   for (const item of iterable) {
     yield* transform(item);
   }
@@ -37,6 +37,14 @@ export const skipWhile = predicate => function*(iterable) {
   for (const item of iterable){
     if (!dropping) yield item;
     if (!predicate(item)) dropping = false;
+  }
+};
+
+export const startWhen = predicate => function*(iterable) {
+  let dropping = true;
+  for (const item of iterable){
+    if (predicate(item)) dropping = false;
+    if (!dropping) yield item;
   }
 };
 
@@ -121,7 +129,7 @@ export const inject = (seed, operation) =>
     }
   };
 
-export const contains = element => some(it => it === element);
+export const contains = element => some(equals(element));
 
 export const sum = reduce((acc, cur) => acc + cur);
 
@@ -129,8 +137,7 @@ export const flatten = reduce((acc, cur) => [...acc, ...cur]);
 
 export const join = separator => reduce((acc, cur) => `${acc}${separator}${cur}`);
 
-export const zip = (other, transform = (a, b) => [a, b]) =>
-  map(item => transform(item, nextValue(other)));
+export const zip = other => map(item => [item, nextValue(other)]);
 
 export const withIndex = iterable =>
   pipe(

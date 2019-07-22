@@ -2,7 +2,7 @@ import { integers } from './numbers';
 import { first, map } from './iterable';
 import { compose, curry, equals, pipe } from './fp';
 
-export const add = b => a => a + b;
+export const add = (b: number) => (a: number) => a + b;
 export const times = b => a => a * b;
 
 export const divide = curry((a, b) =>
