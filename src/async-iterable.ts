@@ -1,10 +1,6 @@
+
 export class Subject<T> implements AsyncIterable<T>, AsyncIterator<T> {
   private receivers: Deferred<T>[] = [];
-
-  add(value: T) {
-    this.receivers.forEach(it => it.resolve(value));
-    this.receivers = [];
-  }
 
   async next() {
     const deferred = new Deferred<T>();
@@ -13,6 +9,11 @@ export class Subject<T> implements AsyncIterable<T>, AsyncIterator<T> {
       value: await deferred.promise,
       done: false,
     };
+  }
+
+  add(value: T) {
+    this.receivers.forEach(it => it.resolve(value));
+    this.receivers = [];
   }
 
   [Symbol.asyncIterator]() {
