@@ -5,17 +5,17 @@ import { compose, equals, pipe } from './fp';
 export const add = b => a => a + b;
 export const times = b => a => a * b;
 
+export const quotient = b =>
+  compose(
+    divide(b),
+    ({ q }) => q,
+  );
+
 export const divide = b => a =>
   pipe(
     integers(),
     map(q => ({ q, r: a - q * b })),
     first(({ q, r }) => r >= 0 && r < b),
-  );
-
-export const quotient = b =>
-  compose(
-    divide(b),
-    ({ q }) => q,
   );
 
 export const mod = b =>

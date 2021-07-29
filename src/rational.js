@@ -22,13 +22,23 @@ export const add = ([c, d]) => ([a, b]) => rat([a * d + b * c, b * d]);
 
 export const times = ([c, d]) => ([a, b]) => rat([a * c, b * d]);
 
-export const toDecimal = length => ([a, b]) => pipe(
-  range(0, length),
-  reduce(([decimals, dividend]) => (pipe(
-    dividend,
-    divide(b),
-    ({q, r}) => [[...decimals, q], 10 * (r)],
-  )), [[], a]),
-  toArray,
-  ([decimal]) => decimal,
-);
+export const toDecimal = length => ([a, b]) =>
+  pipe(
+    range(0, length),
+    reduce(
+      ([decimals, dividend]) =>
+        pipe(
+          dividend,
+          divide(b),
+          ({ q, r }) => [[...decimals, q], 10 * r],
+        ),
+      [[], a],
+    ),
+    toArray,
+    ([decimal]) => decimal,
+  );
+const f3 = b => f1(1, 2) + f2(3, 4);
+
+const f1 = (a, b) => a + b;
+
+const f2 = (a, b) => a + b;

@@ -71,17 +71,19 @@ export const nextValue = compose(
   it => it.next().value,
 );
 
-export const reduce = (operation, seed = null) => iterable => {
-  let acc = seed ?? nextValue(iterable);
+
+
+export const sum = reduce((acc, cur) => acc + cur);
+
+export const flatten = reduce((acc, cur) => [...acc, ...cur]);
+
+export const reduce = (operation, seed) => iterable => {
+  let acc = seed;
   for (const item of iterable) {
     acc = operation(acc, item);
   }
   return acc;
 };
-
-export const sum = reduce((acc, cur) => acc + cur);
-
-export const flatten = reduce((acc, cur) => [...acc, ...cur]);
 
 export const join = separator => reduce((acc, cur) => `${acc}${separator}${cur}`);
 
